@@ -825,6 +825,11 @@ def _taken(order: dict) -> bool:
     return (load_order(order["id"]) or {}).get("state") != "open"
 
 
+# 4 Nov live call: voice Claude ended the chat from its side, the call stayed open on the user's phone and the dial
+# was cancelled at 60 s. Only their own hang-up is sure to end it.
+HANG_UP_HIMSELF = ("He has to end it on their phone himself (the red button or a headphone tap): don't end the chat "
+                   "from your side, it can stay open on their phone and then nothing happens.")
+
 def call(token: str) -> str:
     """phone_call: queue the call the token was made for, then say what the user does next."""
     scrub_stale()
@@ -834,8 +839,8 @@ def call(token: str) -> str:
     got = _taken(order)
     return ("Done: the phone has it. Tell the user to hang up now; it rings a few seconds after this call ends. "
             if got else "Queued: the phone hasn't picked it up yet but should within a few seconds. Tell the user to "
-            "hang up now; it rings a few seconds after this call ends. ") + \
-        "If this call is still going in a minute, the phone won't ring and I'll say so next call."
+            "hang up now; it rings a few seconds after this call ends. ") + HANG_UP_HIMSELF + \
+        " If this call is still going in a minute, the phone won't ring and I'll say so next call."
 
 
 def text(token: str, body: str) -> str:
@@ -862,7 +867,8 @@ def text(token: str, body: str) -> str:
     else:
         what = ("Tell the user to hang up now; it sends a few seconds after this call ends, or, if the phone shows a "
                 "'Tap to text' notification, he taps it and presses Send.")
-    return f"{head} {what} If this call is still going in a minute, the phone won't send it and I'll say so next call."
+    return (f"{head} {what} {HANG_UP_HIMSELF} If this call is still going in a minute, the phone won't send it and "
+            "I'll say so next call.")
 
 
 # ── Outcomes to the user (design §6.1, §8; step outcomes-to-voice) ──────────────
@@ -942,7 +948,7 @@ def _outcome_line(w: dict, res: dict | None) -> str:
                 f"Check the phone's {where} or {verb} them yourself.")
     if out == "cancelled":
         return (f"I didn't {verb} {who}: the voice call was still going a minute after the user said yes, so the phone "
-                f"gave up. Offer to try again, and remind them to hang up straight after.")
+                f"gave up. Offer to try again, and remind them to hang up on their phone himself straight after.")
     if out == "refused":
         return (f"The phone refused to {verb} {who}" + (f": {why}" if why else "")
                 + (". Nothing was dialled." if w["action"] == "call" else ". Nothing was sent."))
