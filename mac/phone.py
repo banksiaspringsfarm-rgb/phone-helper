@@ -827,8 +827,8 @@ def _taken(order: dict) -> bool:
 
 # 4 Nov live call: voice Claude ended the chat from its side, the call stayed open on the user's phone and the dial
 # was cancelled at 60 s. Only their own hang-up is sure to end it.
-HANG_UP_HIMSELF = ("He has to end it on their phone himself (the red button or a headphone tap): don't end the chat "
-                   "from your side, it can stay open on their phone and then nothing happens.")
+HANG_UP_HIMSELF = ("The user must end the call on their own phone (the red button or a headphone tap): don't end the "
+                   "chat from your side, it can stay open on their phone and then nothing happens.")
 
 def call(token: str) -> str:
     """phone_call: queue the call the token was made for, then say what the user does next."""
@@ -948,7 +948,7 @@ def _outcome_line(w: dict, res: dict | None) -> str:
                 f"Check the phone's {where} or {verb} them yourself.")
     if out == "cancelled":
         return (f"I didn't {verb} {who}: the voice call was still going a minute after the user said yes, so the phone "
-                f"gave up. Offer to try again, and remind them to hang up on their phone himself straight after.")
+                f"gave up. Offer to try again, and remind them to hang up on their own phone straight after.")
     if out == "refused":
         return (f"The phone refused to {verb} {who}" + (f": {why}" if why else "")
                 + (". Nothing was dialled." if w["action"] == "call" else ". Nothing was sent."))

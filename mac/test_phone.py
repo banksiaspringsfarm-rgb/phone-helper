@@ -530,7 +530,7 @@ class VoiceTools(VoiceFixture):
         self.assertTrue(set(tok) <= set(P.TOKEN_ALPHABET))
         said = P.call(tok)
         self.assertIn("hang up", said)
-        self.assertIn("end it on their phone himself", said)                  # 4 Nov: voice Claude's own hang-up didn't
+        self.assertIn("end the call on their own phone", said)                  # 4 Nov: voice Claude's own hang-up didn't
         [c] = self.calls()
         self.assertEqual((c["args"], c["device"]), ({"find": "f_x", "pick": "p_a"}, self.device))
         self.assertIn("already been used", P.call(tok))                        # reuse
@@ -956,7 +956,7 @@ class Texts(OutcomeFixture):
         [tok] = self.tokens(self.find_text())                               # and a text blocks a call
         said = P.text(tok, self.BODY)
         self.assertIn("hang up", said)
-        self.assertIn("end it on their phone himself", said)
+        self.assertIn("end the call on their own phone", said)
         [tok] = self.tokens(self.find([self.LENNY], name="Lenny"))
         self.assertIn("already on its way", P.call(tok))
         self.take_texts()
