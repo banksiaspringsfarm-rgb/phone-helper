@@ -1,0 +1,15 @@
+# Android build output and machine paths
+android/build/
+android/app/build/
+android/.gradle/
+android/local.properties
+*.apk
+*.aab
+*.jks
+*.keystore
+# Python
+__pycache__/
+*.pyc
+# your own settings and data never belong in the repo
+.env
+config.json

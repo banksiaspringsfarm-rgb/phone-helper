@@ -1,0 +1,78 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+// One version, written once: versionName "MAJOR.MINOR.PATCH" → versionCode MAJOR*1000000 + MINOR*1000 + PATCH
+// (RoadRecord's scheme: 0.2.0 → 2000). Bump it for every Play upload; Play refuses a versionCode it has seen.
+def appVersion = '0.2.3'
+def (vMajor, vMinor, vPatch) = appVersion.tokenize('.').collect { it as int }
+
+// The upload key lives in the ~/.config/phone-helper/ folder, outside the repo; jobs never read it by hand, Gradle only
+// opens it to sign (docs/play/release-signing.md). Override with PHONE_HELPER_SIGNING=/path/to/file.properties.
+def signingFile = file(System.getenv('PHONE_HELPER_SIGNING') ?:
+        "${System.getProperty('user.home')}/.config/phone-helper/upload.properties")
+def signingProps = new Properties()
+def hasSigningKey = signingFile.exists()
+if (hasSigningKey) signingFile.withInputStream { signingProps.load(it) }
+
+android {
+    namespace 'local.phonehelper'
+    compileSdk 36
+    defaultConfig {
+        applicationId "local.phonehelper"
+        minSdk 31
+        targetSdk 36
+        versionCode vMajor * 1000000 + vMinor * 1000 + vPatch
+        versionName appVersion
+    }
+    buildFeatures { buildConfig true }
+    // The owner's Mac, as the phone reaches it (tailscale serve). Set phoneHelperServer in gradle.properties.
+    defaultConfig.buildConfigField 'String', 'SERVER_URL',
+            "\"${project.findProperty('phoneHelperServer') ?: 'https://your-mac.your-tailnet.ts.net'}\""
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    signingConfigs {
+        release {
+            if (hasSigningKey) {
+                storeFile file(signingProps['storeFile'])
+                storePassword signingProps['storePassword']
+                keyAlias signingProps['keyAlias']
+                keyPassword signingProps['keyPassword']
+            }
+        }
+    }
+    buildTypes {
+        release {
+            // Attached only when the key is there: without it the bundle still builds (unsigned), and the
+            // tests still run, instead of Gradle failing on a null storeFile.
+            if (hasSigningKey) signingConfig signingConfigs.release
+            minifyEnabled false
+        }
+        // The sideloaded copy (D7): the release build (live, not debuggable) but WITH SEND_SMS, because
+        // app/src/release's manifest only applies to buildType release, and signed with this Mac's debug key like
+        // 0.1.0 so it updates the copy on the user's phone in place. Texts go by route A (design §11.1).
+        sideload {
+            initWith release
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+        }
+    }
+}
+
+tasks.matching { it.name == 'bundleRelease' }.configureEach {
+    doLast {
+        logger.lifecycle(hasSigningKey ? "phone-helper: release bundle SIGNED with the upload key"
+                : "phone-helper: release bundle UNSIGNED (no upload key yet, docs/play/release-signing.md)")
+    }
+}
+
+kotlin { compilerOptions { jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17 } }
+
+// No libraries beyond the Kotlin standard library: plain android.* APIs only (org.json is part of Android).
+// JUnit is for the JVM unit tests only and never ships in the app.
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}

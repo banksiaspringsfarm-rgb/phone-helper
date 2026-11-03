@@ -1,0 +1,11 @@
+{
+  "name": "phone-helper",
+  "owner": { "name": "banksiaspringsfarm-rgb" },
+  "plugins": [
+    {
+      "name": "phone-helper",
+      "source": "./",
+      "description": "Claude-guided setup of a self-hosted Android phone helper: call and text saved contacts, hear new texts and missed calls."
+    }
+  ]
+}

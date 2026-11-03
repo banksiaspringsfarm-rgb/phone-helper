@@ -1,0 +1,4 @@
+<resources>
+    <!-- the icon's green; the same value is in docs/play/graphics (Play icon, feature graphic, screenshots) -->
+    <color name="icon_green">#1E6B4A</color>
+</resources>

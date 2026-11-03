@@ -1,0 +1,10 @@
+{
+  "name": "phone-helper",
+  "version": "0.2.3",
+  "description": "Let your own Claude call and text your saved contacts from your Android phone, and read you new texts and missed calls, with a read-back and your spoken yes every time. Self-hosted: your phone talks only to your own computer over your own Tailscale network.",
+  "author": { "name": "banksiaspringsfarm-rgb" },
+  "homepage": "https://github.com/banksiaspringsfarm-rgb/phone-helper",
+  "repository": "https://github.com/banksiaspringsfarm-rgb/phone-helper",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "keywords": ["android", "phone", "sms", "calls", "voice", "self-hosted", "tailscale"]
+}

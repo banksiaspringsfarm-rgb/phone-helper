@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Release (Play) only. The first upload leaves SEND_SMS out so calls reach internal testing without an SMS
+     review; texts then go by route B, a "Tap to text" notice that opens Messages filled in (design §11.1).
+     The second upload deletes this line and sends the SMS Permissions Declaration (docs/play/permissions.md). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.SEND_SMS" tools:node="remove" />
+    <!-- The inbox (incoming texts, missed calls) is sideload only until Play has the SMS and call-log declarations. -->
+    <uses-permission android:name="android.permission.READ_SMS" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" tools:node="remove" />
+</manifest>
