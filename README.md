@@ -38,6 +38,11 @@ The number rules are written for Australia (000, 112, 106, 190x, 0055). Elsewher
 `NumberRules.kt` for your country before the first real call; the phone's own emergency-number list is
 already used everywhere.
 
+## Free, and a coffee if you like
+It's free for personal use and always will be. If it saves you some fiddling and you feel like saying thanks,
+there's a Ko-fi page: https://ko-fi.com/banksiaspringsfarm. Nothing is locked behind it, and nothing in the kit
+checks or reports whether you tip.
+
 ## Licence
 PolyForm Noncommercial 1.0.0: free for personal and non-commercial use; commercial use needs permission (open an
 issue). See `LICENSE.md`. No warranty: it places real calls and sends real texts from your phone.
